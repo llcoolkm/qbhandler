@@ -72,7 +72,18 @@ def main():
     response = session.post(f"{qb_url}/api/v2/auth/login", data=login_data)
 
     if not ((response.status_code == 200 and response.text == "Ok.") or response.status_code == 204):
-        print(f"Login failed. HTTP {response.status_code}.", file=sys.stderr)
+        if response.status_code == 401:
+            reason = "credentials rejected"
+        elif response.status_code == 403:
+            reason = "access forbidden"
+        else:
+            reason = "unexpected login response"
+        body = response.text[:200]
+        print(
+            f"Login failed: HTTP {response.status_code} ({reason}); "
+            f"response body: {body!r}",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     # FILE PREP
