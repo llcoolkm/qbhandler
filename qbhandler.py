@@ -71,8 +71,8 @@ def main():
     login_data = {'username': username, 'password': password}
     response = session.post(f"{qb_url}/api/v2/auth/login", data=login_data)
 
-    if response.text != "Ok.":
-        print("Login failed.", file=sys.stderr)
+    if not ((response.status_code == 200 and response.text == "Ok.") or response.status_code == 204):
+        print(f"Login failed. HTTP {response.status_code}.", file=sys.stderr)
         sys.exit(1)
 
     # FILE PREP
